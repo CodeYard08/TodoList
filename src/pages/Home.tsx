@@ -1,12 +1,49 @@
+import { useEffect, useRef, useState } from "react";
 import { Button, Input, TodoItem } from "../components";
-
-const DUMMY_TODOS = [
-  { id: 1, text: "운동하기", done: true },
-  { id: 2, text: "책 읽기", done: false },
-  { id: 3, text: "코드 리뷰", done: false },
-];
+import type { Todo } from "../types/todolist";
 
 export const Home = () => {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const [text, setText] = useState<string>("");
+  const inputTextRef = useRef(null);
+
+  const addTodo = () => {
+    if (!text.trim()) return;
+
+    const newTodo: Todo = {
+      id: Date.now(),
+      text: text,
+      done: false,
+    };
+
+    setTodos([newTodo, ...todos]);
+    setText("");
+  };
+
+  const setIsDoneCheckBox = (id: number) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, done: !todo.done } : todo,
+      ),
+    );
+  };
+
+  const delteTodo = (id: number) => {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  };
+
+  const editTodo = (id: number, editText: string) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, text: editText } : todo,
+      ),
+    );
+  };
+
+  const doneCount = todos.filter((todo) => todo.done).length;
+
+  useEffect(() => {}, [todos]);
+
   return (
     <div
       style={{
@@ -28,18 +65,26 @@ export const Home = () => {
       </h1>
 
       <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
-        <Input value="" onChange={() => {}} placeholder="할 일을 입력하세요" />
-        <Button variant="primary">추가</Button>
+        <Input
+          value={text}
+          onChange={setText}
+          placeholder="할 일을 입력하세요"
+          ref={inputTextRef}
+        />
+        <Button onClick={addTodo} variant="primary">
+          추가
+        </Button>
       </div>
 
       <ul style={{ padding: 0, margin: 0 }}>
-        {DUMMY_TODOS.map((todo) => (
+        {todos.map((todo) => (
           <TodoItem
             key={todo.id}
             text={todo.text}
             done={todo.done}
-            onToggle={() => {}}
-            onDelete={() => {}}
+            onToggle={() => setIsDoneCheckBox(todo.id)}
+            onDelete={() => delteTodo(todo.id)}
+            onEdit={(editText) => editTodo(todo.id, editText)}
           />
         ))}
       </ul>
@@ -52,7 +97,7 @@ export const Home = () => {
           textAlign: "right",
         }}
       >
-        완료 1 / 전체 3
+        완료 {doneCount} / 전체 {todos.length}
       </div>
     </div>
   );
