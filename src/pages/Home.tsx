@@ -1,12 +1,18 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Input, TodoItem } from "../components";
 import type { Todo } from "../types/todolist";
 
 export const Home = () => {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState<Todo[]>(() =>
+    JSON.parse(localStorage.getItem("todos") ?? "[]"),
+  );
   const [text, setText] = useState<string>("");
 
   const textRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   const addTodo = () => {
     if (!text.trim()) return;
