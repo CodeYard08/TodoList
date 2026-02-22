@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import React from "react";
 
 type InputProps = {
   value: string;
@@ -7,7 +7,7 @@ type InputProps = {
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ value, onChange, placeholder, onKeyDown }, ref) => {
     return (
       <input

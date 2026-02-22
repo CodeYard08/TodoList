@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "../button";
 
 type TodoItemProps = {
@@ -19,6 +19,8 @@ export const TodoItem = ({
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [editText, setEditText] = useState<string>(text);
 
+  const editInputRef = useRef<HTMLInputElement>(null);
+
   const onClickIdEditing = () => {
     if (!isEditing) {
       setIsEditing(true);
@@ -29,6 +31,12 @@ export const TodoItem = ({
     onEdit(editText);
     setIsEditing(false);
   };
+
+  useEffect(() => {
+    if (isEditing) {
+      editInputRef.current?.focus();
+    }
+  }, [isEditing]);
 
   return (
     <li
@@ -50,6 +58,7 @@ export const TodoItem = ({
       />
       {isEditing ? (
         <input
+          ref={editInputRef}
           value={editText}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setEditText(e.target.value)

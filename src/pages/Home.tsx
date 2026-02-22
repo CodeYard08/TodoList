@@ -1,11 +1,12 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Button, Input, TodoItem } from "../components";
 import type { Todo } from "../types/todolist";
 
 export const Home = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [text, setText] = useState<string>("");
-  const inputTextRef = useRef(null);
+
+  const textRef = useRef<HTMLInputElement>(null);
 
   const addTodo = () => {
     if (!text.trim()) return;
@@ -18,6 +19,7 @@ export const Home = () => {
 
     setTodos([newTodo, ...todos]);
     setText("");
+    textRef.current?.focus();
   };
 
   const setIsDoneCheckBox = (id: number) => {
@@ -42,8 +44,6 @@ export const Home = () => {
 
   const doneCount = todos.filter((todo) => todo.done).length;
 
-  useEffect(() => {}, [todos]);
-
   return (
     <div
       style={{
@@ -66,10 +66,10 @@ export const Home = () => {
 
       <div style={{ display: "flex", gap: "8px", marginBottom: "16px" }}>
         <Input
+          ref={textRef}
           value={text}
           onChange={setText}
           placeholder="할 일을 입력하세요"
-          ref={inputTextRef}
         />
         <Button onClick={addTodo} variant="primary">
           추가
